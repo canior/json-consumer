@@ -90,6 +90,12 @@
     "guzzlehttp/psr7": {
         "version": "1.7.0"
     },
+    "knplabs/knp-components": {
+        "version": "v3.0.0"
+    },
+    "knplabs/knp-paginator-bundle": {
+        "version": "v5.4.1"
+    },
     "monolog/monolog": {
         "version": "2.1.1"
     },

@@ -27,7 +27,7 @@ class OfferRepository extends ServiceEntityRepository
 
 	/**
 	 * @param $offerId
-	 * @return mixed
+	 * @return OfferEntity[]
 	 * @throws TransactionRequiredException
 	 */
 	public function findByOfferId($offerId) {
@@ -43,7 +43,7 @@ class OfferRepository extends ServiceEntityRepository
 	 * @param array $orderBy
 	 * @return QueryBuilder
 	 */
-	public function findOfferQuery($search, $orderBy) {
+	public function findOfferQuery($search = [], $orderBy = []) {
 		$query = $this->createQueryBuilder('o');
 
 		if (array_key_exists('name', $search)) {

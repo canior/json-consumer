@@ -82,7 +82,7 @@ class FeedController extends BaseController
 		$form->handleRequest($request);
 
 		if ($form->isSubmitted() && $form->isValid()) {
-			$this->feedService->addFeed($feed);
+			$this->feedService->saveOrUpdateFeed($feed);
 			return $this->redirectToRoute('feed_download', ['id' => $feed->getId()]);
 		}
 

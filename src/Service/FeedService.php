@@ -56,18 +56,16 @@ class FeedService
 		$feed = $this->feedRepository->find($id);
 		$sourceUrl = $feed->getSourceUrl();
 
-		$isLarge = $this->downloadService->isLargeFile($sourceUrl);
 		try {
+			$isLarge = $this->downloadService->isLargeFile($sourceUrl);
 			if ($isLarge) {
 				$this->messageBus->dispatch(new DownloadFile($feed->getId(), $sourceUrl));
 			} else {
 				$url = $this->downloadService->downloadFile($sourceUrl);
 				$this->completeDownload($feed, $url, true, $isLarge);
 			}
-		} catch (TransportExceptionInterface $e) {
-			$this->completeDownload($feed, null, false, $isLarge);
-			$this->entityManager->persist($feed);
-			$this->entityManager->flush();
+		} catch (\Throwable $e) {
+			$this->completeDownload($feed, null, false, null);
 			throw new DownloadFailedException("Can't download file " . $sourceUrl);
 		}
 
@@ -92,7 +90,7 @@ class FeedService
 	/**
 	 * @param FeedEntity $feed
 	 */
-	public function addFeed(FeedEntity $feed) {
+	public function saveOrUpdateFeed(FeedEntity $feed) {
 		$this->entityManager->persist($feed);
 		$this->entityManager->flush();
 	}

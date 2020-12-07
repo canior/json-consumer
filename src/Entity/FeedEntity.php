@@ -82,6 +82,8 @@ class FeedEntity
 
 	public function __construct() {
 		$this->setCreatedAt();
+		$this->skipError = false;
+		$this->forceUpdate = true;
 		$this->offers = new ArrayCollection();
 	}
 

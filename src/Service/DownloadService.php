@@ -8,14 +8,12 @@ use App\Exception\DownloadFailedException;
 use App\Utils\Config;
 use App\Utils\Url;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 
 class DownloadService
 {
-
 
 	/**
 	 * @var string

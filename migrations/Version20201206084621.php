@@ -17,7 +17,7 @@ final class Version20201206084621 extends AbstractMigration
 	}
 
 	public function up(Schema $schema): void {
-		$this->addSql('  CREATE TABLE `feed` (
+		$this->addSql('CREATE TABLE `feed` (
 								  `id` int(10) NOT NULL AUTO_INCREMENT,
 								  `source_url` varchar(1000) NOT NULL,
 								  `url` varchar(1000),
@@ -31,16 +31,16 @@ final class Version20201206084621 extends AbstractMigration
 								  `process_completed_at` int (10),
 								  PRIMARY KEY (`id`)
 								) ENGINE=InnoDB DEFAULT CHARSET=utf8');
-		$this->addSql('  CREATE TABLE `offer` (
+		$this->addSql('CREATE TABLE `offer` (
 								  `id` int(10) NOT NULL AUTO_INCREMENT,
-								  `offer_id` int(10) int(10) NOT NULL,
+								  `offer_id` int(10) NOT NULL,
 								  `name` varchar(255) NOT NULL,
 								  `image_url` varchar (1000),
 								  `cash_back` decimal (10, 2) NOT NULL,
 								  `update_feed_id` int(10) NOT NULL,
 								  `updated_at` int(10) NOT NULL,
 								  `created_at` int(10) NOT NULL,
-								  PRIMARY KEY (`id`),
+								  PRIMARY KEY (id),
 								  FOREIGN KEY (update_feed_id) REFERENCES feed(id)
 								) ENGINE=InnoDB DEFAULT CHARSET=utf8');
 	}

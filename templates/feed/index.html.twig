@@ -37,7 +37,7 @@
                                         <td>{{ item.forceUpdateText }}</td>
                                         <td>{{ item.createdAtFormatted }}</td>
                                         <td>
-                                            {% if item.readyToImport and item.processStartedAt is empty and item.processCompleteddAt is empty %}
+                                            {% if item.readyToImport and item.processStartedAt is empty and item.processCompletedAt is empty %}
                                                 <a href="{{ path('feed_download', {'id': item.id}) }}">Import Offers</a>
                                             {% else %}
                                                 {{ item.statusText }}
