@@ -1,0 +1,40 @@
+{% set notices = app.session.flashBag.get('notice') %}
+{% if notices is not empty %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-success alert-dismissible">
+                {% if notices|length > 1 %}
+                    <ul>
+                        {% for flashMessage in notices %}
+                            <li>{{ flashMessage }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    {% for flashMessage in notices %}
+                        {{ flashMessage }}
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% set dangers = app.session.flashBag.get('danger') %}
+{% if dangers is not empty %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-danger alert-dismissible">
+                {% if dangers|length > 1 %}
+                    <ul>
+                        {% for flashMessage in dangers %}
+                            <li>{{ flashMessage }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    {% for flashMessage in dangers %}
+                        {{ flashMessage }}
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endif %}

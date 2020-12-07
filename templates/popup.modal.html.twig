@@ -1,0 +1,35 @@
+<div id="noticeModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="modal-title">Notice</h5>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <p id="notice"></p>
+                </div>
+                <div>
+                    <a href="javascript:$('#noticeModal').modal('hide')" type="button" class="btn btn-danger">Close</a>
+                    <a href="javascript:location.reload()" type="button" class="btn btn-info">Refresh Page</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const socket = new WebSocket("ws://localhost:3001");
+    socket.addEventListener("open", function() {
+        console.log("CONNECTED");
+    });
+    socket.addEventListener("message", function(e) {
+        let result = JSON.parse(e.data);
+        if (result.feedId == {{ feed.id }} && result.valid) {
+            $('#notice').html('Hello');
+            $('#noticeModal').modal('show');
+        }
+    });
+</script>

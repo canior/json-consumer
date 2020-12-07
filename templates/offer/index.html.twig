@@ -1,0 +1,168 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Horizontal Form -->
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Search Offer</h3>
+                </div>
+                <!-- /.box-header -->
+                <!-- form start -->
+                <form class="form-horizontal" id="searchForm">
+                    <input type="hidden" name="orderById" value="{{form.orderBy.id}}" />
+                    <input type="hidden" name="orderByName" value="{{form.orderBy.name}}" />
+                    <input type="hidden" name="orderByCashBack" value="{{form.orderBy.cashBack}}" />
+                    <div class="box-body">
+                        <div class="form-group col-md-3">
+                            <label class="col-sm-4 control-label">Feed Id</label>
+                            <div class="col-sm-8">
+                                <input type="text" name="feedId" class="form-control" value="{{ form.search.feedId }}"
+                                       placeholder="Search by feed id">
+                            </div>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label class="col-sm-4 control-label">Name</label>
+                            <div class="col-sm-8">
+                                <input type="text" name="offerName" class="form-control" value="{{ form.search.name }}"
+                                       placeholder="Search by offer name">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <input class="form-control btn btn-primary" type="submit" value="Search"/>
+                            </div>
+                            <div class="col-md-2">
+                                <a class="form-control btn btn-danger" href="{{ path('offer_index') }}" type="button">Reset</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.box-footer -->
+                </form>
+            </div>
+            <!-- /.box -->
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    {% include "app.session.flashbag.html.twig" %}
+                    <h3 class="box-title">Total: ({{ pagination.getTotalItemCount }})</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div class="table-responsive">
+                        <table id="offer-table" class="table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <th class="col-md-2">Image</th>
+                                <th class="col-md-1">
+                                    <a id="sortId" href="javascript:void(0)">ID</a>
+                                    {% if 'id' in form.orderBy|keys %}
+                                        {% if form.orderBy.id == 'asc' %}
+                                            <span class="fa fa-sort-asc text-red"></span>
+                                        {% elseif form.orderBy.id == 'desc' %}
+                                            <span class="fa fa-sort-desc text-red"></span>
+                                        {% endif %}
+                                    {% endif %}
+                                </th>
+                                <th class="col-md-1">Offer ID</th>
+                                <th class="col-md-2">
+                                    <a id="sortName" href="javascript:void(0)">Name</a>
+                                    {% if 'name' in form.orderBy|keys %}
+                                        {% if form.orderBy.name == 'asc' %}
+                                            <span class="fa fa-sort-asc text-red"></span>
+                                        {% elseif form.orderBy.name == 'desc' %}
+                                            <span class="fa fa-sort-desc text-red"></span>
+                                        {% endif %}
+                                    {% endif %}
+                                </th>
+                                <th class="col-md-1">
+                                    <a id="sortCashBack" href="javascript:void(0)">Cash Back</a>
+                                    {% if 'cashBack' in form.orderBy|keys %}
+                                        {% if form.orderBy.cashBack == 'asc' %}
+                                            <span class="fa fa-sort-asc text-red"></span>
+                                        {% elseif form.orderBy.cashBack == 'desc' %}
+                                            <span class="fa fa-sort-desc text-red"></span>
+                                        {% endif %}
+                                    {% endif %}
+                                </th>
+                                <th class="col-md-2">Updated</th>
+                                <th class="col-md-2">Created</th>
+                                <th class="col-md-1">Update Feed</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% if pagination.getTotalItemCount %}
+                                {% for item in pagination %}
+                                    <tr>
+                                        <td>
+                                            {% if (item.imageUrl) %}
+                                                <img class="img img-responsive" width="50px" height="50px"
+                                                     src="{{ item.imageUrl }}">
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ item.id }}</td>
+                                        <td>{{ item.offerId }}</td>
+                                        <td>{{ item.name }}</td>
+                                        <td>{{ item.cashBack }}</td>
+                                        <td>{{ item.updatedAtFormatted }}</td>
+                                        <td>{{ item.createdAtFormatted }}</td>
+                                        <td>{{ item.updateFeed.id }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="12" class="alert">No records found</td>
+                                </tr>
+                            {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- /.box-body -->
+                <div class="box-footer clearfix">
+                    <div class="no-margin pull-right">
+                        {{ knp_pagination_render(pagination) }}
+                    </div>
+                </div>
+            </div>
+            <!-- /.box -->
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+
+    <script>
+        function toggleSort(sortInput) {
+            let order = sortInput.val();
+            if (order === '') {
+                sortInput.val('asc');
+            } else if (order === 'asc') {
+                sortInput.val('desc');
+            } else if (order === 'desc') {
+                sortInput.val('asc');
+            }
+            $('#searchForm').submit();
+        }
+
+        $(document).ready(function() {
+            $('#sortCashBack').on('click', function() {
+                toggleSort($('input[name=orderByCashBack]'));
+            })
+            $('#sortName').on('click', function() {
+                toggleSort($('input[name=orderByName]'));
+            })
+            $('#sortId').on('click', function() {
+                toggleSort($('input[name=orderById]'));
+            })
+        });
+
+    </script>
+{% endblock %}

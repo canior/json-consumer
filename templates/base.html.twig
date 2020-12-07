@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}{% endblock %}</title>
+    <meta name="keywords" content=""/>
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('build/app.css') }}">
+        {{ include('css.html.twig') }}
+    {% endblock %}
+    <script src="{{ asset('build/app.js') }}"></script>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+{% if noSideBarShow is not defined %}
+<div class="wrapper">
+
+    {% include 'sidebar.html.twig' %}
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>{{ title is defined ? title : '' }}</h1>
+        </section>
+        {% endif %}
+        <!-- Main content -->
+        <section class="content">
+            {% block body %}{% endblock %}
+        </section>
+        {% if noSideBarShow is not defined %}
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+</div>
+    <!-- ./wrapper -->
+{% endif %}
+{% block javascripts %}
+    {{ include('js.html.twig') }}
+    <script type="text/javascript">
+        //handle multiple submit
+        $('button[type="submit"]').on('click', function (e) {
+            let self = $(this);
+            let canSubmit = self.data('canSubmit');
+            if (canSubmit) {
+                e.preventDefault();
+                setTimeout(function () {
+                    self.data('canSubmit', 0);
+                }, 1000)
+            } else {
+                self.data('canSubmit', 1);
+            }
+        });
+    </script>
+{% endblock %}
+</body>
+</html>

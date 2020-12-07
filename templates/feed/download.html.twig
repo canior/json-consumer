@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <!-- general form elements disabled -->
+                <div class="box box-solid">
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <div class="col-md-12 text-center">
+                            <div class="alert {% if feed.readyToImport  %} alert-info {% else %} alert-danger {% endif %} ">{{ feed.statusText }}</div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <table class="table table-bordered table-striped">
+                                <tr>
+                                    <th class="col-md-4">ID</th>
+                                    <td class="col-md-8">{{ feed.id }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Source URL</th>
+                                    <td>{{ feed.sourceUrl }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Skip Error</th>
+                                    <td>{{ feed.skipErrorText }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Force Update</th>
+                                    <td>{{ feed.forceUpdateText }}</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="col-md-12 text-center">
+
+                            {% if feed.valid is null %}
+                            {% elseif feed.valid %}
+                            <form action="/feed/import/{{ feed.id }}" method="post">
+                                <button class="btn btn-primary"
+                                    type="submit">{{ button_label|default('Import') }}</button>
+                            </form>
+                            {% else %}
+                                <a class="btn btn-danger" href="{{ path('feed_new') }}" type="button">Import Again</a>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

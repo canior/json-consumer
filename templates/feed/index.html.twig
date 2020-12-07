@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    {% include "app.session.flashbag.html.twig" %}
+                    <h3 class="box-title">Total: ({{ pagination.getTotalItemCount }})</h3>
+                    <div class="pull-right">
+                        <a href="{{ path('feed_new') }}" type="button" class="btn btn-info">Add Feed</a>
+                        <a href="{{ path('feed_delete') }}" type="button" class="btn btn-danger">Delete Feeds & Offers </a>
+                    </div>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <th class="col-md-1">ID</th>
+                                <th class="col-md-3">Source URL</th>
+                                <th class="col-md-1">Skip Error</th>
+                                <th class="col-md-1">Force Update</th>
+                                <th class="col-md-2">Created</th>
+                                <th class="col-md-2">Status</th>
+                                <th class="col-md-2">Offers</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% if pagination.getTotalItemCount %}
+                                {% for item in pagination %}
+                                    <tr>
+                                        <td>{{ item.id }}</td>
+                                        <td>{{ item.sourceUrl }}</td>
+                                        <td>{{ item.skipErrorText }}</td>
+                                        <td>{{ item.forceUpdateText }}</td>
+                                        <td>{{ item.createdAtFormatted }}</td>
+                                        <td>
+                                            {% if item.readyToImport and item.processStartedAt is empty and item.processCompleteddAt is empty %}
+                                                <a href="{{ path('feed_download', {'id': item.id}) }}">Import Offers</a>
+                                            {% else %}
+                                                {{ item.statusText }}
+                                            {% endif %}
+                                        </td>
+                                        <td><a href="{{ path('offer_index', {'feedId': item.id}) }}">{{ item.offers.count }}</a></td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="12" class="alert">No records found</td>
+                                </tr>
+                            {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- /.box-body -->
+                <div class="box-footer clearfix">
+                    <div class="no-margin pull-right">
+                        {{ knp_pagination_render(pagination) }}
+                    </div>
+                </div>
+            </div>
+            <!-- /.box -->
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+{% endblock %}
