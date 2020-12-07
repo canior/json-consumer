@@ -29,7 +29,7 @@ class FeedServiceTest extends AbstractTestCase
 
 		$message = new DownloadFile($feedId, $sourceUrl);
 		$this->assertEquals($message, $this->getMockMessageBus()->getMemory()[0]);
-
+		$this->getMockMessageBus()->resetMemory();
 	}
 
 	public function testProcessSimpleFeed() {

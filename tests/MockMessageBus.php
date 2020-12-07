@@ -18,6 +18,10 @@ class MockMessageBus implements MessageBusInterface
 		$this->memory = [];
 	}
 
+	public function resetMemory() {
+		$this->memory = [];
+	}
+
 	public function getMemory() {
 		return $this->memory;
 	}

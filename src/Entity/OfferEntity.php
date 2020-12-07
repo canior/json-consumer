@@ -51,6 +51,7 @@ class OfferEntity
 	 */
 	private $updateFeed;
 
+
 	public function  __construct() {
 		$this->setCreatedAt();
 		$this->setUpdatedAt();

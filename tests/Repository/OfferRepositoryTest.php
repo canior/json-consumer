@@ -13,15 +13,13 @@ class OfferRepositoryTest extends AbstractTestCase
 	public function testFindByOfferId() {
 		$this->cleanData();
 		$offers = $this->buildOffers();
-		$this->getEntityManager()->beginTransaction();
 		$offer1FromDB = $this->getOfferRepository()->findByOfferId(10);
-		$this->assertEquals($offers['offer1'], $offer1FromDB[0]);
+		$this->assertEquals($offers['offer1'], $offer1FromDB);
 	}
 
 	public function testFindOfferQuery() {
 		$this->cleanData();
 		$offers = $this->buildOffers();
-		$this->getEntityManager()->beginTransaction();
 
 		$allOffers = $this->getOfferRepository()->findOfferQuery()->getQuery()->getResult();
 		$this->assertEquals(count($offers), count($allOffers));

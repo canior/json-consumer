@@ -10,6 +10,7 @@ use App\Exception\ImportOfferException;
 use App\Message\ImportOffers;
 use App\Repository\FeedRepository;
 use App\Repository\OfferRepository;
+use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
@@ -70,6 +71,21 @@ class OfferService
 	}
 
 	/**
+	 * @return MessageBusInterface
+	 */
+	public function getMessageBus(): MessageBusInterface {
+		return $this->messageBus;
+	}
+
+	/**
+	 * @param MessageBusInterface $messageBus
+	 */
+	public function setMessageBus(MessageBusInterface $messageBus): void {
+		$this->messageBus = $messageBus;
+	}
+
+
+	/**
 	 * @param int $feedId
 	 * @throws ImportOfferException
 	 */
@@ -96,27 +112,35 @@ class OfferService
 	 */
 	public function importOffers(FeedEntity $feed) {
 		$json = file_get_contents($feed->getUrl());
-
-		if ($feed->isSkipError()) {
-			$offers = $this->filterOutErrorOffers($json);
-		} else {
-			$offers = $this->deserialize($json);
-		}
+		$offers = $this->filterOutErrorOffers($json, $feed->isSkipError());
 
 		/**
 		 * Pessimistic write implemented to avoid concurrency
 		 */
 		$transactionalFunction = function () use ($feed, $offers) {
 			foreach ($offers as $offer) {
-				$offerEntity = $this->offerRepository->findByOfferId($offer->getOfferId());
-				if ($offerEntity != null && !$feed->isForceUpdate()) {
-					continue;
+				$existingOffer = $this->offerRepository->findByOfferId($offer->getOfferId());
+				if ($existingOffer == null) {
+					$existingOffer = new OfferEntity();
+				} else {
+					if (!$feed->isForceUpdate()) {
+						continue;
+					}
+					$this->entityManager->lock($existingOffer, LockMode::PESSIMISTIC_WRITE);
+					$existingOffer->setUpdatedAt();
 				}
-				$offer->setUpdateFeed($feed);
-				$feed->setProcessCompletedAt(time());
-				$this->entityManager->persist($feed);
-				$this->entityManager->persist($offer);
+
+				$existingOffer->setOfferId($offer->getOfferId());
+				$existingOffer->setName($offer->getName());
+				$existingOffer->setCashBack($offer->getCashBack());
+				$existingOffer->setImageUrl($offer->getImageUrl());
+				$existingOffer->setUpdateFeed($feed);
+
+				$this->entityManager->persist($existingOffer);
 			}
+
+			$feed->setProcessCompletedAt(time());
+			$this->entityManager->persist($feed);
 		};
 
 		$this->transactionalService->transactional($transactionalFunction);
@@ -124,6 +148,7 @@ class OfferService
 
 
 	/**
+	 * @deprecated
 	 * @param $data string
 	 * @return OfferEntity[]
 	 */
@@ -138,20 +163,33 @@ class OfferService
 
 	/**
 	 * @param $data string
+	 * @param $skipError bool
 	 * @return OfferEntity[]
+	 * @throws ImportOfferException
 	 */
-	public function filterOutErrorOffers($data) {
+	public function filterOutErrorOffers($data, $skipError) {
 		$dataArray = json_decode($data, true);
 		$offers = $dataArray['offers'];
 		$validOffers = [];
 		foreach ($offers as $offer) {
-			if ($offer['offer_id'] > 0 && $offer['cash_back'] > 0) {
+			if (array_key_exists('offer_id', $offer)
+				&& array_key_exists('cash_back', $offer)
+				&& array_key_exists('name', $offer)
+				&& $offer['cash_back'] > 0
+				&& $offer['offer_id'] > 0
+			) {
 				$offerEntity = new OfferEntity();
 				$offerEntity->setOfferId($offer['offer_id']);
 				$offerEntity->setCashBack($offer['cash_back']);
-				$offerEntity->setImageUrl($offer['image_url']);
+				if (array_key_exists('image_url', $offer)) {
+					$offerEntity->setImageUrl($offer['image_url']);
+				}
 				$offerEntity->setName($offer['name']);
 				$validOffers[] = $offerEntity;
+			} else {
+				if (!$skipError) {
+					throw new ImportOfferException();
+				}
 			}
 		}
 		return $validOffers;

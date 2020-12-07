@@ -11,7 +11,6 @@ class FeedRepositoryTest extends AbstractTestCase
 {
 	public function testFindAllFeedsQuery() {
 		$this->cleanData();
-		$this->getEntityManager()->beginTransaction();
 
 		$totalFeeds = random_int(1, 100);
 		for($i = 0; $i < $totalFeeds; $i++) {

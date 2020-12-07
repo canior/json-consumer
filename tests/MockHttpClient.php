@@ -15,7 +15,7 @@ class MockHttpClient implements HttpClientInterface
 	const LARGE_FILE_URL = "http://largeFile";
 	const SMALL_FILE_URL = "http://small";
 	const INVALID_URL = "http://invalid";
-	const SHORT_FILE_CONTENT = '\'{
+	const SHORT_FILE_CONTENT = '{
 			  "batch_id": 0,
 			  "offers": [
 			    {
@@ -25,8 +25,8 @@ class MockHttpClient implements HttpClientInterface
 			      "cash_back": 1.0
 			    }
 			]
-		}\';';
-	const LARGE_FILE_CONTENT = '\'{
+		}';
+	const LARGE_FILE_CONTENT = '{
 			  "batch_id": 0,
 			  "offers": [
 			    {
@@ -34,9 +34,15 @@ class MockHttpClient implements HttpClientInterface
 			      "name": "Buy 2: Select TRISCUIT Crackers",
 			      "image_url": "https://d3bx4ud3idzsqf.cloudfront.net/public/production/6840/67561_1535141624.jpg",
 			      "cash_back": 1.0
+			    },
+			    {
+			      "offer_id": "39271",
+			      "name": "Tide Liquid Detergent",
+			      "image_url": "https://d3bx4ud3idzsqf.cloudfront.net/public/production/4902/56910_1527084051.jpg",
+			      "cash_back": 1.0
 			    }
 			]
-		}\';';
+		}';
 
 	private $responseStream;
 

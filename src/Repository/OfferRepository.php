@@ -7,6 +7,7 @@ namespace App\Repository;
 use App\Entity\OfferEntity;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\LockMode;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\TransactionRequiredException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -27,15 +28,14 @@ class OfferRepository extends ServiceEntityRepository
 
 	/**
 	 * @param $offerId
-	 * @return OfferEntity[]
-	 * @throws TransactionRequiredException
+	 * @return OfferEntity
+	 * @throws NonUniqueResultException
 	 */
 	public function findByOfferId($offerId) {
 		return $this->getEntityManager()
 			->createQuery('SELECT o FROM App\Entity\OfferEntity o WHERE o.offerId = :offerId')
 			->setParameter('offerId', $offerId)
-			->setLockMode(LockMode::PESSIMISTIC_WRITE)
-			->getResult();
+			->getOneOrNullResult();
 	}
 
 	/**

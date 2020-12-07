@@ -10,6 +10,7 @@ use App\Repository\FeedRepository;
 use App\Repository\OfferRepository;
 use App\Service\DownloadService;
 use App\Service\FeedService;
+use App\Service\OfferService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -63,10 +64,17 @@ class AbstractTestCase extends KernelTestCase
 	}
 
 	/**
+	 * @return OfferService
+	 */
+	protected function getOfferService() {
+		return self::$container->get(OfferService::class);
+	}
+
+	/**
 	 * @return DownloadService
 	 */
 	protected function getDownloadService() {
-		return self::$container->get('App\Service\DownloadService');
+		return self::$container->get(DownloadService::class);
 	}
 
 	/**
