@@ -79,12 +79,12 @@ Quick run (Handle small feed file < 5000 bytes )
 ```
 1. cp .env.dist to .env
 2. replace DATABASE_URL to correct info
-3. create database tables
+3. composer install
+4. chmod -R 777 var && chmod -R public/upload
+5. create database tables
    php bin/console doctrine:migrations:migrate
-4. composer install
-5. chmod -R 777 var && chmod -R public/upload
 6. symfony server:start
-7. check http://127.0.0.1:8000/feed/
+7. check http://127.0.0.1:8000/
 ```
 
 Message Queue & Websocket Support (Handle large feed file )
