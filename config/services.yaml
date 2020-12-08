@@ -5,7 +5,7 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     file_directory: '%kernel.project_dir%/public/upload/'
-    ws_host: ws://localhost
+    ws_host: ws://34.209.94.255
     ws_port: 3001
 services:
     # default configuration for services in *this* file
