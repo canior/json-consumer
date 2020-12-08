@@ -199,7 +199,23 @@ class OfferService
 	 */
 	public function filterOutErrorOffers($data, $skipError) {
 		$dataArray = json_decode($data, true);
+		if (json_last_error() != JSON_ERROR_NONE) {
+			$this->logger->warning('this is not a json format');
+			throw new ImportOfferException();
+		}
+
+		if (!array_key_exists('offers', $dataArray)) {
+			$this->logger->warning('cannot parse json format to load offers');
+			throw new ImportOfferException();
+		}
+
 		$offers = $dataArray['offers'];
+
+		if (!is_array($offers)) {
+			$this->logger->warning('cannot parse json format to load offers');
+			throw new ImportOfferException();
+		}
+
 		$validOffers = [];
 		foreach ($offers as $offer) {
 			if (array_key_exists('offer_id', $offer)

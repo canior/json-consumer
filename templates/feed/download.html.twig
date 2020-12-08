@@ -53,6 +53,6 @@
         </div>
     </div>
     {% if feed.id is defined %}
-    {% include "popup.modal.html.twig" with {feedId: feed.id} %}
+    {% include "popup.modal.html.twig" with {feedId: feed.id, wsHost: wsHost, wsPort: wsPort} %}
     {% endif %}
 {% endblock %}

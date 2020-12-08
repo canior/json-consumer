@@ -139,7 +139,7 @@
     <!-- /.row -->
 
     {% if form.search.feedId is defined and form.search.feedId > 0 %}
-    {% include "popup.modal.html.twig" with {feedId: form.search.feedId} %}
+    {% include "popup.modal.html.twig" with {feedId: form.search.feedId, wsHost: wsHost, wsPort: wsPort} %}
     {% endif %}
 
     <script>

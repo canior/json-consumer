@@ -8,6 +8,7 @@ use App\Repository\OfferRepository;
 use App\Service\OfferService;
 use App\Utils\Config;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -28,13 +29,20 @@ class OfferController extends BaseController
 	private $paginator;
 
 	/**
+	 * @var ParameterBagInterface
+	 */
+	private $parameterBag;
+
+	/**
 	 * OfferController constructor.
 	 * @param PaginatorInterface $paginator
+	 * @param ParameterBagInterface $parameterBag
 	 * @param OfferService $offerService
 	 */
-	public function __construct(PaginatorInterface $paginator, OfferService $offerService) {
+	public function __construct(PaginatorInterface $paginator, ParameterBagInterface $parameterBag, OfferService $offerService) {
 		$this->paginator = $paginator;
 		$this->offerService = $offerService;
+		$this->parameterBag = $parameterBag;
 	}
 
 	/**
@@ -46,6 +54,8 @@ class OfferController extends BaseController
 	public function indexAction(Request $request, OfferRepository $offerRepository) {
 		$data = [
 			'title' => 'Offers',
+			'wsHost' => $this->parameterBag->get('ws_host'),
+			'wsPort' => $this->parameterBag->get('ws_port'),
 			'form' => [
 				'search' => [
 					'sourceUrl' => $request->query->get('sourceUrl', ''),

@@ -13,6 +13,7 @@ use App\Service\FeedService;
 use App\Service\OfferService;
 use App\Utils\Config;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -39,15 +40,21 @@ class FeedController extends BaseController
 	private $paginator;
 
 	/**
+	 * @var ParameterBagInterface
+	 */
+	private $parameterBag;
+
+	/**
 	 * FeedController constructor.
 	 * @param PaginatorInterface $paginator
 	 * @param FeedService $feedService
 	 * @param OfferService $offerService
 	 */
-	public function __construct(PaginatorInterface $paginator, FeedService $feedService, OfferService $offerService) {
+	public function __construct(PaginatorInterface $paginator, FeedService $feedService, OfferService $offerService, ParameterBagInterface $parameterBag) {
 		$this->paginator = $paginator;
 		$this->feedService = $feedService;
 		$this->offerService = $offerService;
+		$this->parameterBag = $parameterBag;
 	}
 
 	/**
@@ -86,7 +93,7 @@ class FeedController extends BaseController
 
 		return $this->render('feed/new.html.twig', [
 			'title' => 'Import Feed',
-			'form' => $form->createView()
+			'form' => $form->createView(),
 		]);
 	}
 
@@ -105,6 +112,8 @@ class FeedController extends BaseController
 
 		return $this->render('feed/download.html.twig', [
 			'title' => 'Download Feed',
+			'wsHost' => $this->parameterBag->get('ws_host'),
+			'wsPort' => $this->parameterBag->get('ws_port'),
 			'feed' => $feed
 		]);
 	}
