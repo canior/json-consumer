@@ -4,6 +4,7 @@
 namespace App\Service;
 
 
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class WebSocketService
@@ -11,11 +12,17 @@ class WebSocketService
 	private $ws;
 
 	/**
+	 * @var LoggerInterface
+	 */
+	private $logger;
+
+	/**
 	 * DownloadService constructor.
 	 * @param ParameterBagInterface $params
 	 */
-	public function __construct(ParameterBagInterface $params) {
+	public function __construct(ParameterBagInterface $params, LoggerInterface $logger) {
 		$this->ws = $params->get('ws_host') . ':' . $params->get('ws_port') ;
+		$this->logger = $logger;
 	}
 
 	/**
@@ -23,14 +30,15 @@ class WebSocketService
 	 */
 	public function sendMessage($messageArray) {
 		try {
-			\Ratchet\Client\connect('ws://localhost:3001')->then(function ($conn) use ($messageArray) {
+			$this->logger->info('connect to ' . $this->ws);
+			\Ratchet\Client\connect($this->ws)->then(function ($conn) use ($messageArray) {
 				$conn->send(json_encode($messageArray));
 				$conn->close();
 			}, function (\Exception $e) {
-				var_dump($e);exit;
+				$this->logger->info('cannot connect to ' . $this->ws);
 			});
 		} catch (\Exception $e) {
-			var_dump($e);exit;
+			$this->logger->error('failed connect to ' . $this->ws);
 		}
 	}
 }
