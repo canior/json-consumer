@@ -127,9 +127,6 @@ class FeedController extends BaseController
 	 * @return Response
 	 */
 	public function deleteAction() {
-		if  ($_SERVER['APP_ENV'] != 'dev') {
-			return new Response('Not Authorized', 401);
-		}
 		$this->getDoctrine()->getConnection()->exec('delete from offer');
 		$this->getDoctrine()->getConnection()->exec('delete from feed');
 		return $this->redirectToRoute('feed_index', []);
