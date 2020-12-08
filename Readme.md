@@ -52,10 +52,10 @@ Large file import process:
 
 ```
 1. add feed url 
-2. feed is downloading on backend
+2. feed is downloading on message queue
 3. feed is downloaded and notify user by websocket
 4. start import process
-5. import process starts for local file on backend
+5. import process starts for local file on message queue
 6. imported and notify user by websocket
 ```
 
@@ -115,6 +115,14 @@ Phpunit is used for functional test and web test
 1. Controller: test looks and feel with xpath parser by symfony
 
 OPTIMIZATION: codeception should be used to support js
+```
+
+### Run Tests
+
+```
+1. cp phpunit.xml.dist to .phpunit.xml
+2. replace DATABASE_URL to test database info
+3. ./vendor/bin/phpunit tests
 ```
 
 ## Deployment
