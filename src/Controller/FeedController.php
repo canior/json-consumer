@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Entity\FeedEntity;
 use App\Exception\DownloadFailedException;
+use App\Exception\ImportOfferException;
 use App\Form\FeedType;
 use App\Repository\FeedRepository;
 use App\Service\FeedService;
@@ -112,12 +113,16 @@ class FeedController extends BaseController
 	 * @Route("/import/{id}", requirements={"id"="\d+"}, name="feed_import", methods="POST")
 	 * @param int $id
 	 * @return Response
-	 * @throws \App\Exception\ImportOfferException
 	 */
 	public function importAction($id) {
 		//check if feed is already downloaded
 		//check file chunksum and valid
-		$this->offerService->processOffers($id);
+		try {
+			$this->offerService->processOffers($id);
+		} catch (ImportOfferException $e) {
+			return $this->redirectToRoute('feed_download', ['id' => $id]);
+		}
+
 		return $this->redirectToRoute('offer_index', ['feedId' => $id]);
 	}
 
