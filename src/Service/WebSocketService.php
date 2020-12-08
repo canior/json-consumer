@@ -19,6 +19,7 @@ class WebSocketService
 	/**
 	 * DownloadService constructor.
 	 * @param ParameterBagInterface $params
+	 * @param LoggerInterface $logger
 	 */
 	public function __construct(ParameterBagInterface $params, LoggerInterface $logger) {
 		$this->ws = $params->get('ws_host') . ':' . $params->get('ws_port') ;
