@@ -9,13 +9,13 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/")
  */
-class IndexController
+class IndexController extends BaseController
 {
 	/**
 	 * @Route("/", name="index", methods="GET")
 	 * @return Response
 	 */
 	public function indexAction() {
-		return new Response("thank you");
+		return $this->render('index.html.twig');
 	}
 }

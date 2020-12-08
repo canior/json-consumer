@@ -8,7 +8,17 @@
             <!-- general form elements disabled -->
             <div class="box">
                 <div class="box-body">
-                    {% include "app.session.flashbag.html.twig" %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="alert alert-success alert-dismissible">
+                                <ul>
+                                    <li>Small feed file sample URL <a target="_blank" href="/small.json">(Small Feed)</a></li>
+                                    <li>Large feed file sample URL <a target="_blank" href="/large.json">(Large Feed)</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
                     {{ form_start(form) }}
                     {{ form_widget(form) }}
                     <a class="btn btn-danger" href="{{ path('feed_index') }}">{{ 'Back'|trans }}</a>

@@ -1,0 +1,299 @@
+<html>
+<head>
+    <title>index.md</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<div id='content'>
+    <h1 id="json-feed-importer-for-offers">JSON FEED IMPORTER FOR OFFERS</h1>
+    <p><a href="/feed/">Import Feeds Here</a></p>
+    <p><a target="_blank" href="http://yadi.yunlishuju.com/">Demo Link</a></p>
+    <p>Import json feed and parse to a list of offers and their attributes. Each row in the list must contain the offer name, its image and the cashback value in dollars.</p>
+    <h2 id="getting-started">Getting Started</h2>
+    <p>This project is for demo purpose, and technologies involve:</p>
+    <pre><code> php framework: symfony (components including: mvc, form, dependency injections, console command)
+
+ third party bundles: KnpPaginatorBundle (handle pagination)
+
+ orm framework: doctrine orm, pessimistic locking, migration
+
+ message queue: symfony messager (memory transport dsn used by default)
+
+ websocket: ratchet (localhost used by default)
+
+ phpunit: demonstrate functional test, web test with test database
+</code></pre>
+    <h2 id="design">Design</h2>
+    <p>Import feed options:</p>
+    <pre><code>Skip Error: Import process skips error offer data (offerId is numeric and &gt; 0, cash back is &gt; 0)
+Force Update: Update existing offer data if offerId exists.
+</code></pre>
+    <p>Import Process:</p>
+    <pre><code>Small File: Import process happens right away
+Large File: Import process happens on backend and will notify user after it's completed
+Concurrency: Import concurrency is implemented with pessimistic locking
+</code></pre>
+    <p>Small file import process:</p>
+    <pre><code>1. add feed url
+2. feed is downloaded to server
+3. import process starts for local file
+4. imported and show offer list
+</code></pre>
+    <p>Large file import process:</p>
+    <pre><code>1. add feed url
+2. feed is downloading on message queue
+3. feed is downloaded and notify user by websocket
+4. start import process
+5. import process starts for local file on message queue
+6. imported and notify user by websocket
+</code></pre>
+    <h2 id="implementation">Implementation</h2>
+    <h3 id="prerequisites">Prerequisites</h3>
+    <pre><code>php: 7.3 +
+mysql: 5.5+
+composer: 1.9+
+apache: 2.0+
+</code></pre>
+    <h3 id="installing-on-unix-ubuntu-mac-os-centos-etc">Installing on unix (ubuntu, mac os, centos, etc.)</h3>
+    <p>Quick run (Handle small feed file &lt; 5000 bytes )</p>
+    <pre><code>1. cp .env.dist to .env
+2. replace DATABASE_URL to correct info
+3. composer install
+4. chmod -R 777 var &amp;&amp; chmod -R public/upload
+4. symfony server:start
+5. check http://127.0.0.1:8000/feed/
+</code></pre>
+    <p>Message Queue &amp; Websocket Support (Handle large feed file )</p>
+    <pre><code>1. start websocket server
+php bin/console websocket-server
+
+2. start message queue (memory)
+php bin/console messenger:consume async
+
+NOTICE: these scripts should be a deamon service, and for unix supervisor is recommanded
+</code></pre>
+    <h2 id="running-the-tests">Running the tests</h2>
+    <p>Phpunit is used for functional test and web test</p>
+    <h3 id="unit-test">Unit Test</h3>
+    <pre><code>1. Entity: test basic logic
+2. Repository: test database queries
+3. Service: test business logics
+</code></pre>
+    <h3 id="web-test">Web Test</h3>
+    <pre><code>1. Controller: test looks and feel with xpath parser by symfony
+
+OPTIMIZATION: codeception should be used to support js
+</code></pre>
+    <h3 id="run-tests">Run Tests</h3>
+    <pre><code>1. cp phpunit.xml.dist to .phpunit.xml
+2. replace DATABASE_URL to test database info
+3. ./vendor/bin/phpunit tests
+</code></pre>
+    <h2 id="deployment">Deployment</h2>
+    <p>Apache configuration</p>
+    <pre><code>&lt;VirtualHost *:80&gt;
+    ServerName [domain]
+    ServerAlias [alias]
+    DocumentRoot [project path]
+
+    &lt;Directory [project path]&gt;
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride All
+        Require all granted
+    &lt;/Directory&gt;
+
+    ErrorLog ${APACHE_LOG_DIR}/[error log path]
+    CustomLog ${APACHE_LOG_DIR}/[access log path] combined
+&lt;/VirtualHost&gt;
+</code></pre>
+    <p>Enable Apache URL Rewrite</p>
+    <pre><code> composer require symfony/apache-pack
+</code></pre>
+</div>
+<style type='text/css'>body {
+        font: 400 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+        color: #111;
+        background-color: #fdfdfd;
+        -webkit-text-size-adjust: 100%;
+        -webkit-font-feature-settings: "kern" 1;
+        -moz-font-feature-settings: "kern" 1;
+        -o-font-feature-settings: "kern" 1;
+        font-feature-settings: "kern" 1;
+        font-kerning: normal;
+        padding: 30px;
+    }
+
+    @media only screen and (max-width: 600px) {
+        body {
+            padding: 5px;
+        }
+
+        body > #content {
+            padding: 0px 20px 20px 20px !important;
+        }
+    }
+
+    body > #content {
+        margin: 0px;
+        max-width: 900px;
+        border: 1px solid #e1e4e8;
+        padding: 10px 40px;
+        padding-bottom: 20px;
+        border-radius: 2px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    hr {
+        color: #bbb;
+        background-color: #bbb;
+        height: 1px;
+        flex: 0 1 auto;
+        margin: 1em 0;
+        padding: 0;
+        border: none;
+    }
+
+    /**
+     * Links
+     */
+    a {
+        color: #0366d6;
+        text-decoration: none; }
+    a:visited {
+        color: #0366d6; }
+    a:hover {
+        color: #0366d6;
+        text-decoration: underline; }
+
+    pre {
+        background-color: #f6f8fa;
+        border-radius: 3px;
+        font-size: 85%;
+        line-height: 1.45;
+        overflow: auto;
+        padding: 16px;
+    }
+
+    /**
+      * Code blocks
+      */
+
+    code {
+        background-color: rgba(27,31,35,.05);
+        border-radius: 3px;
+        font-size: 85%;
+        margin: 0;
+        word-wrap: break-word;
+        padding: .2em .4em;
+        font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
+    }
+
+    pre > code {
+        background-color: transparent;
+        border: 0;
+        display: inline;
+        line-height: inherit;
+        margin: 0;
+        overflow: visible;
+        padding: 0;
+        word-wrap: normal;
+        font-size: 100%;
+    }
+
+
+    /**
+     * Blockquotes
+     */
+    blockquote {
+        margin-left: 30px;
+        margin-top: 0px;
+        margin-bottom: 16px;
+        border-left-width: 3px;
+        padding: 0 1em;
+        color: #828282;
+        border-left: 4px solid #e8e8e8;
+        padding-left: 15px;
+        font-size: 18px;
+        letter-spacing: -1px;
+        font-style: italic;
+    }
+    blockquote * {
+        font-style: normal !important;
+        letter-spacing: 0;
+        color: #6a737d !important;
+    }
+
+    /**
+     * Tables
+     */
+    table {
+        border-spacing: 2px;
+        display: block;
+        font-size: 14px;
+        overflow: auto;
+        width: 100%;
+        margin-bottom: 16px;
+        border-spacing: 0;
+        border-collapse: collapse;
+    }
+
+    td {
+        padding: 6px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    th {
+        font-weight: 600;
+        padding: 6px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    tr {
+        background-color: #fff;
+        border-top: 1px solid #c6cbd1;
+    }
+
+    table tr:nth-child(2n) {
+        background-color: #f6f8fa;
+    }
+
+    /**
+     * Others
+     */
+
+    img {
+        max-width: 100%;
+    }
+
+    p {
+        line-height: 24px;
+        font-weight: 400;
+        font-size: 16px;
+        color: #24292e; }
+
+    ul {
+        margin-top: 0; }
+
+    li {
+        color: #24292e;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 1.5; }
+
+    li + li {
+        margin-top: 0.25em; }
+
+    * {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        color: #24292e; }
+
+    a:visited {
+        color: #0366d6; }
+
+    h1, h2, h3 {
+        border-bottom: 1px solid #eaecef;
+        color: #111;
+        /* Darker */ }</style>
+</body>
+</html>

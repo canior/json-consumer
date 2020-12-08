@@ -1,5 +1,7 @@
 # JSON FEED IMPORTER FOR OFFERS
 
+[Demo Link](http://yadi.yunlishuju.com/)
+
 Import json feed and parse to a list of offers and their attributes. Each row in the list must contain the offer name, its image and the cashback value in dollars.
 
 ## Getting Started
@@ -152,7 +154,5 @@ Enable Apache URL Rewrite
  composer require symfony/apache-pack
 ```
 
-
-[Demo Link](http://yadi.yunlishuju.com/)
 
 
