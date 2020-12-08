@@ -8,6 +8,8 @@ use App\Exception\DownloadFailedException;
 use App\Repository\FeedRepository;
 use App\Service\DownloadService;
 use App\Service\FeedService;
+use App\Service\WebSocket\MessagePusher;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -33,22 +35,29 @@ class DownloadFileHandler implements MessageHandlerInterface
 
 
 	/**
-	 * @var Application
+	 * @var MessagePusher
 	 */
-	private $application;
+	private $messagePusher;
+
+	/**
+	 * @var LoggerInterface
+	 */
+	private $logger;
 
 	/**
 	 * DownloadFileHandler constructor.
 	 * @param FeedService $feedService
 	 * @param FeedRepository $feedRepository
 	 * @param DownloadService $downloadService
-	 * @param KernelInterface $kernel
+	 * @param MessagePusher $messagePusher
+	 * @param LoggerInterface $logger
 	 */
-	public function __construct(FeedService $feedService, FeedRepository $feedRepository, DownloadService $downloadService, KernelInterface $kernel) {
+	public function __construct(FeedService $feedService, FeedRepository $feedRepository, DownloadService $downloadService, MessagePusher $messagePusher, LoggerInterface $logger) {
 		$this->feedService = $feedService;
 		$this->feedRepository = $feedRepository;
 		$this->downloadService = $downloadService;
-		$this->application = new Application($kernel);
+		$this->messagePusher = $messagePusher;
+		$this->logger = $logger;
 	}
 
 	/**
@@ -59,31 +68,19 @@ class DownloadFileHandler implements MessageHandlerInterface
 	public function __invoke(DownloadFile $downloadFile) {
 		$sourceUrl = $downloadFile->getUrl();
 		$feed = $this->feedRepository->find($downloadFile->getFeedId());
+		if ($feed == null) {
+			$this->logger->info('feed id not exist ' . $downloadFile->getFeedId() . ', skip queue');
+			return;
+		}
+
 		try {
 			$url = $this->downloadService->downloadFile($sourceUrl);
 			$this->feedService->completeDownload($feed, $url, true, true);
-			$this->pushNotification($feed->getId());
+			$this->messagePusher->pushFeedNotification($feed->getId());
 		} catch (\Throwable $e) {
 			$this->feedService->completeDownload($feed, null, false, true);
-			$this->pushNotification($feed->getId());
+			$this->messagePusher->pushFeedNotification($feed->getId());
 			throw new DownloadFailedException("Can't download file " . $sourceUrl);
 		}
-	}
-
-	/**
-	 * @param $feedId
-	 * @throws \Exception
-	 */
-	public function pushNotification($feedId) {
-		try {
-			$this->application->run(new ArrayInput([
-				'command' => 'websocket-download-notification',
-				'-i' => $feedId,
-				'--feedId' => $feedId,
-			]), new BufferedOutput());
-		} catch (\Exception $e) {
-
-		}
-
 	}
 }

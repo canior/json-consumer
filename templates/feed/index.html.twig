@@ -31,16 +31,19 @@
                             {% if pagination.getTotalItemCount %}
                                 {% for item in pagination %}
                                     <tr>
-                                        <td>{{ item.id }}</td>
+                                        <td>
+                                            <a href="{{ path('feed_download', {'id': item.id}) }}">{{ item.id }}</a>
+                                        </td>
                                         <td>{{ item.sourceUrl }}</td>
                                         <td>{{ item.skipErrorText }}</td>
                                         <td>{{ item.forceUpdateText }}</td>
                                         <td>{{ item.createdAtFormatted }}</td>
                                         <td>
-                                            {% if item.readyToImport and item.processStartedAt is empty and item.processCompletedAt is empty %}
-                                                <a href="{{ path('feed_download', {'id': item.id}) }}">Import Offers</a>
-                                            {% else %}
-                                                {{ item.statusText }}
+                                            {{ item.status }}
+                                            {% if item.downloaded %}
+                                                <a href="{{ path('feed_download', {'id': item.id}) }}"> (Import Offers) </a>
+                                            {% elseif (item.downloading) %}
+                                                <a href="{{ path('feed_download', {'id': item.id}) }}"> (View Download) </a>
                                             {% endif %}
                                         </td>
                                         <td><a href="{{ path('offer_index', {'feedId': item.id}) }}">{{ item.offers.count }}</a></td>
@@ -67,4 +70,5 @@
         <!-- /.col -->
     </div>
     <!-- /.row -->
+
 {% endblock %}

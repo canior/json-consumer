@@ -79,7 +79,7 @@ class FeedServiceTest extends AbstractTestCase
 		$feed = new FeedEntity();
 		$feed->setSourceUrl($sourceUrl);
 		$this->assertNull($feed->getValid());
-		$this->assertFalse($feed->isSkipError());
+		$this->assertTrue($feed->isSkipError());
 
 		$this->getFeedService()->completeDownload($feed, $url, true, false);
 
@@ -89,7 +89,7 @@ class FeedServiceTest extends AbstractTestCase
 		$feedFromDB = $this->getFeedRepository()->find($feed->getId());
 
 		$this->assertEquals($feed, $feedFromDB);
-		$this->assertFalse($feedFromDB->isSkipError());
+		$this->assertTrue($feedFromDB->isSkipError());
 		$this->assertTrue($feedFromDB->getValid());
 		$this->assertEquals($url, $feedFromDB->getUrl());
 

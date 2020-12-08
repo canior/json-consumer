@@ -55,7 +55,7 @@ class FeedControllerTest extends AbstractWebTestCase
 		});
 
 		$this->assertEquals('ID Source URL Skip Error Force Update Created Status Offers', $feedTableContent[0]);
-		$this->assertEquals($feed->getId() . ' http://test.com No Yes ' . $feed->getCreatedAtFormatted() . ' Downloading .. 0', $feedTableContent[1]);
+		$this->assertEquals($feed->getId() . ' http://test.com No Yes ' . $feed->getCreatedAtFormatted() . ' Downloading (View Download) 0', $feedTableContent[1]);
 	}
 
 	public function testFeedDownloadedDataIndexAction() {
@@ -73,7 +73,7 @@ class FeedControllerTest extends AbstractWebTestCase
 		$feed->setForceUpdate(true);
 		$feed->setUrl('/tmp/');
 		$feed->setLarge(true);
-		$feed->setValid(true);
+		$feed->setStatus(FeedEntity::STATUS_DOWNLOADED);
 		$entityManager->persist($feed);
 		$entityManager->flush();
 
@@ -86,7 +86,7 @@ class FeedControllerTest extends AbstractWebTestCase
 		});
 
 		$this->assertEquals('ID Source URL Skip Error Force Update Created Status Offers', $feedTableContent[0]);
-		$this->assertEquals($feed->getId() . ' http://test.com No Yes ' . $feed->getCreatedAtFormatted() . ' Import Offers 0', $feedTableContent[1]);
+		$this->assertEquals($feed->getId() . ' http://test.com No Yes ' . $feed->getCreatedAtFormatted() . ' Downloaded (Import Offers) 0', $feedTableContent[1]);
 	}
 
 	public function testFeedWithOffersIndexAction() {
@@ -105,6 +105,7 @@ class FeedControllerTest extends AbstractWebTestCase
 		$feed->setUrl('/tmp/');
 		$feed->setLarge(true);
 		$feed->setValid(true);
+		$feed->setStatus(FeedEntity::STATUS_IMPORTED);
 		$feed->setProcessStartedAt(time());
 		$feed->setProcessCompletedAt(time());
 		$entityManager->persist($feed);
@@ -129,6 +130,6 @@ class FeedControllerTest extends AbstractWebTestCase
 		});
 
 		$this->assertEquals('ID Source URL Skip Error Force Update Created Status Offers', $feedTableContent[0]);
-		$this->assertEquals($feed->getId() . ' http://test.com No Yes ' . $feed->getCreatedAtFormatted() . ' Import Completed 1', $feedTableContent[1]);
+		$this->assertEquals($feed->getId() . ' http://test.com No Yes ' . $feed->getCreatedAtFormatted() . ' Imported 1', $feedTableContent[1]);
 	}
 }

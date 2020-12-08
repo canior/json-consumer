@@ -12,9 +12,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class WebsocketDownloadNotificationCommand extends Command
+class WebsocketNotificationCommand extends Command
 {
-	protected static $defaultName = "websocket-download-notification";
+	protected static $defaultName = "websocket-notification";
 
 	/**
 	 * @var WebSocketService
@@ -59,7 +59,8 @@ class WebsocketDownloadNotificationCommand extends Command
 
 		$this->webSocketService->sendMessage([
 			'feedId' => $feedId,
-			'valid' => $feed->getValid(),
+			'status' => $feed->getStatus(),
+			'message' =>  $feed->getStatus() . ' for URL: ' . $feed->getSourceUrl(),
 		]);
 		return 0;
 	}

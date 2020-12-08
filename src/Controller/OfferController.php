@@ -52,14 +52,13 @@ class OfferController extends BaseController
 					'name' => $request->query->get('offerName', ''),
 					'feedId' => $request->query->get('feedId', ''),
 				],
-				'orderBy' => [],
+				'orderBy' => [
+					'field' => $request->get('orderByField', 'id'),
+					'order' => $request->get('orderByOrder', 'desc'),
+				],
 				'page' => $request->query->getInt('page', 1),
 			]
 		];
-
-		$data['form']['orderBy']['id'] = $request->get('orderById', '');
-		$data['form']['orderBy']['name'] = $request->get('orderByName', '');
-		$data['form']['orderBy']['cashBack'] = $request->get('orderByCashBack', '');
 
 		$feedQuery = $offerRepository->findOfferQuery($data['form']['search'], $data['form']['orderBy']);
 		$data['pagination'] = $this->paginator->paginate($feedQuery, $data['form']['page'], Config::PAGE_LIMIT);

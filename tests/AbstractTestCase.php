@@ -52,6 +52,10 @@ class AbstractTestCase extends KernelTestCase
 		return $this->mockMessageBus;
 	}
 
+	protected function getMockLogger() {
+		return new MockLogger();
+	}
+
 	/**
 	 * @return FeedService
 	 */
@@ -60,7 +64,7 @@ class AbstractTestCase extends KernelTestCase
 	}
 
 	protected function getMockFeedService() {
-		return new FeedService($this->getEntityManager(), $this->getMockDownloadService(), $this->getFeedRepository(), $this->getMockMessageBus());
+		return new FeedService($this->getEntityManager(), $this->getMockDownloadService(), $this->getFeedRepository(), $this->getMockMessageBus(), $this->getMockLogger());
 	}
 
 	/**

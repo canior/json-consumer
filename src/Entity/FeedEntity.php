@@ -25,6 +25,13 @@ class FeedEntity
 	private $sourceUrl;
 
 	/**
+	 * @var string
+	 * @ORM\Column(type="string", nullable=false)
+	 */
+	private $status;
+
+
+	/**
 	 * @var string|null
 	 * @ORM\Column(type="string", nullable=true)
 	 */
@@ -55,12 +62,6 @@ class FeedEntity
 	private $large;
 
 	/**
-	 * @var string|null
-	 * @ORM\Column(type="string", nullable=true)
-	 */
-	private $chunkSum;
-
-	/**
 	 * @var int|null
 	 * @ORM\Column(name="process_started_at", type="integer", nullable=true)
 	 */
@@ -79,12 +80,19 @@ class FeedEntity
 	private $offers;
 
 
+	const STATUS_DOWNLOADING = 'Downloading';
+	const STATUS_DOWNLOADED = 'Downloaded';
+	const STATUS_DOWNLOADED_ERROR = 'Download Error';
+	const STATUS_IMPORTING = 'Importing';
+	const STATUS_IMPORTED = 'Imported';
+	const STATUS_IMPORTED_ERROR = 'Import Error';
 
 	public function __construct() {
 		$this->setCreatedAt();
-		$this->skipError = false;
+		$this->skipError = true;
 		$this->forceUpdate = true;
 		$this->offers = new ArrayCollection();
+		$this->setStatus(self::STATUS_DOWNLOADING);
 	}
 
 	/**
@@ -171,19 +179,6 @@ class FeedEntity
 		$this->large = $large;
 	}
 
-	/**
-	 * @return string|null
-	 */
-	public function getChunkSum(): ?string {
-		return $this->chunkSum;
-	}
-
-	/**
-	 * @param string|null $chunkSum
-	 */
-	public function setChunkSum(?string $chunkSum): void {
-		$this->chunkSum = $chunkSum;
-	}
 
 	/**
 	 * @return int|null
@@ -214,42 +209,31 @@ class FeedEntity
 	}
 
 	/**
-	 * @return bool
+	 * @return string
 	 */
-	public function isDownloaded() {
-		return !is_null($this->url);
-	}
-
 	public function getSkipErrorText() {
 		return $this->isSkipError() ? 'Yes' : 'No';
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getForceUpdateText() {
 		return $this->isForceUpdate() ? 'Yes' : 'No';
 	}
 
-	public function isReadyToImport() {
-		return !is_null($this->getUrl());
+	/**
+	 * @return string
+	 */
+	public function getStatus(): string {
+		return $this->status;
 	}
 
-	public function getStatusText() {
-		if ($this->getValid() === false) {
-			return 'Error Feed, Stop Processing';
-		}
-
-		if (!is_null($this->getProcessStartedAt()) && is_null($this->getProcessCompletedAt())) {
-			return 'Importing ...';
-		}
-
-		if (!is_null($this->getProcessStartedAt()) && !is_null($this->getProcessCompletedAt())) {
-			return 'Import Completed';
-		}
-
-		if (!$this->isReadyToImport()) {
-			return 'Downloading ..';
-		} else {
-			return 'Downloaded and ready to import';
-		}
+	/**
+	 * @param string $status
+	 */
+	public function setStatus(string $status): void {
+		$this->status = $status;
 	}
 
 	/**
@@ -264,5 +248,29 @@ class FeedEntity
 	 */
 	public function setOffers($offers): void {
 		$this->offers = $offers;
+	}
+
+	public function isDownloading() {
+		return self::STATUS_DOWNLOADING == $this->status;
+	}
+
+	public function isDownloaded() {
+		return self::STATUS_DOWNLOADED == $this->status;
+	}
+
+	public function isDownloadedError() {
+		return self::STATUS_DOWNLOADED_ERROR == $this->status;
+	}
+
+	public function isImporting() {
+		return self::STATUS_IMPORTING == $this->status;
+	}
+
+	public function isImported() {
+		return self::STATUS_IMPORTED == $this->status;
+	}
+
+	public function isImportedError() {
+		return self::STATUS_IMPORTED_ERROR == $this->status;
 	}
 }

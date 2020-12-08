@@ -12,6 +12,7 @@ use App\Repository\FeedRepository;
 use App\Repository\OfferRepository;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
@@ -53,6 +54,11 @@ class OfferService
 	private $messageBus;
 
 	/**
+	 * @var LoggerInterface
+	 */
+	private $logger;
+
+	/**
 	 * OfferService constructor.
 	 * @param EntityManagerInterface $entityManager
 	 * @param TransactionalService $transactionalService
@@ -60,14 +66,22 @@ class OfferService
 	 * @param OfferRepository $offerRepository
 	 * @param DownloadService $downloadService
 	 * @param MessageBusInterface $messageBus
+	 * @param LoggerInterface $logger
 	 */
-	public function __construct(EntityManagerInterface $entityManager, TransactionalService $transactionalService, FeedRepository $feedRepository, OfferRepository $offerRepository, DownloadService $downloadService, MessageBusInterface $messageBus) {
+	public function __construct(EntityManagerInterface $entityManager,
+	                            TransactionalService $transactionalService,
+	                            FeedRepository $feedRepository,
+	                            OfferRepository $offerRepository,
+	                            DownloadService $downloadService,
+	                            MessageBusInterface $messageBus,
+								LoggerInterface $logger) {
 		$this->entityManager = $entityManager;
 		$this->transactionalService = $transactionalService;
 		$this->feedRepository = $feedRepository;
 		$this->downloadService = $downloadService;
 		$this->offerRepository = $offerRepository;
 		$this->messageBus = $messageBus;
+		$this->logger = $logger;
 	}
 
 	/**
@@ -93,15 +107,24 @@ class OfferService
 		$feed = $this->feedRepository->find($feedId);
 		try {
 			if ($feed->getLarge() === true) {
+				$this->logger->info('process large feed, will process async');
 				$feed->setProcessStartedAt(time());
+				$feed->setStatus(FeedEntity::STATUS_IMPORTING);
 				$this->entityManager->persist($feed);
 				$this->entityManager->flush();
 				$this->messageBus->dispatch(new ImportOffers($feedId));
 			} else {
+				$this->logger->info('process large feed, process now');
 				$feed->setProcessStartedAt(time());
+				$feed->setStatus(FeedEntity::STATUS_IMPORTING);
 				$this->importOffers($feed);
 			}
 		} catch (\Exception $e) {
+			$this->logger->warning('something wrong when importing feed');
+			$feed->setProcessCompletedAt(time());
+			$feed->setStatus(FeedEntity::STATUS_IMPORTED_ERROR);
+			$this->entityManager->persist($feed);
+			$this->entityManager->flush();
 			throw new ImportOfferException('Failed to import offers from feed ' . $feedId);
 		}
 	}
@@ -111,6 +134,12 @@ class OfferService
 	 * @throws \Exception
 	 */
 	public function importOffers(FeedEntity $feed) {
+		if ($feed->isImporting() != FeedEntity::STATUS_IMPORTING) {
+			$this->logger->warning('feed is imported, skip feed ' . $feed->getId());
+			return;
+		}
+
+		$this->logger->info('import offers from local file ' . $feed->getUrl());
 		$json = file_get_contents($feed->getUrl());
 		$offers = $this->filterOutErrorOffers($json, $feed->isSkipError());
 
@@ -140,6 +169,7 @@ class OfferService
 			}
 
 			$feed->setProcessCompletedAt(time());
+			$feed->setStatus(FeedEntity::STATUS_IMPORTED);
 			$this->entityManager->persist($feed);
 		};
 

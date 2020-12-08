@@ -43,8 +43,8 @@ class OfferControllerTest extends AbstractWebTestCase
 			return $node->text();
 		});
 
-		$this->assertEquals($offers['offer1']->getId() . ' 10 offer1 10 ' . $offers['offer1']->getUpdatedAtFormatted() . ' ' . $offers['offer1']->getCreatedAtFormatted()  . ' ' . $offers['offer1']->getUpdateFeed()->getId(), $feedTableContent[1]);
-		$this->assertEquals($offers['offer2']->getId() . ' 20 offer2 20 ' . $offers['offer2']->getUpdatedAtFormatted() . ' ' . $offers['offer2']->getCreatedAtFormatted()  . ' ' . $offers['offer2']->getUpdateFeed()->getId(), $feedTableContent[2]);
+		$this->assertEquals($offers['offer2']->getId() . ' 20 offer2 20 ' . $offers['offer2']->getUpdatedAtFormatted() . ' ' . $offers['offer2']->getCreatedAtFormatted()  . ' ' . $offers['offer2']->getUpdateFeed()->getId(), $feedTableContent[1]);
+		$this->assertEquals($offers['offer1']->getId() . ' 10 offer1 10 ' . $offers['offer1']->getUpdatedAtFormatted() . ' ' . $offers['offer1']->getCreatedAtFormatted()  . ' ' . $offers['offer1']->getUpdateFeed()->getId(), $feedTableContent[2]);
 	}
 
 	public function testSearchIndexAction() {
@@ -81,8 +81,9 @@ class OfferControllerTest extends AbstractWebTestCase
 			return $node->text();
 		});
 		$this->assertEquals(3, count($feedTableContent));
-		$this->assertEquals($offers['offer2']->getId() . ' 20 offer2 20 ' . $offers['offer2']->getUpdatedAtFormatted() . ' ' . $offers['offer2']->getCreatedAtFormatted()  . ' ' . $offers['offer2']->getUpdateFeed()->getId(), $feedTableContent[2]);
-		$this->assertEquals($offers['offer1']->getId() . ' 10 offer1 10 ' . $offers['offer1']->getUpdatedAtFormatted() . ' ' . $offers['offer1']->getCreatedAtFormatted()  . ' ' . $offers['offer1']->getUpdateFeed()->getId(), $feedTableContent[1]);
+		$this->assertEquals($offers['offer1']->getId() . ' 10 offer1 10 ' . $offers['offer1']->getUpdatedAtFormatted() . ' ' . $offers['offer1']->getCreatedAtFormatted()  . ' ' . $offers['offer1']->getUpdateFeed()->getId(), $feedTableContent[2]);
+		$this->assertEquals($offers['offer2']->getId() . ' 20 offer2 20 ' . $offers['offer2']->getUpdatedAtFormatted() . ' ' . $offers['offer2']->getCreatedAtFormatted()  . ' ' . $offers['offer2']->getUpdateFeed()->getId(), $feedTableContent[1]);
+
 	}
 
 	/**

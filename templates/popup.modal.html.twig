@@ -5,15 +5,21 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">Notice</h5>
             </div>
             <div class="modal-body">
                 <div>
-                    <p id="notice"></p>
+                    <div id="noticeInfo" class="hide alert alert-info">
+
+                    </div>
+
+                    <div id="noticeDanger" class="hide alert alert-danger">
+
+                    </div>
                 </div>
                 <div>
                     <a href="javascript:$('#noticeModal').modal('hide')" type="button" class="btn btn-danger">Close</a>
-                    <a href="javascript:location.reload()" type="button" class="btn btn-info">Refresh Page</a>
+                    <a id="viewDownload" class="hide btn btn-primary" href="{{ path('feed_download', {'id': feedId}) }}">View Download</a>
+                    <a id="viewOffer" class="hide btn btn-primary" href="{{ path('offer_index', {'feedId': feedId}) }}">View Offers</a>
                 </div>
             </div>
         </div>
@@ -27,8 +33,26 @@
     });
     socket.addEventListener("message", function(e) {
         let result = JSON.parse(e.data);
-        if (result.feedId == {{ feed.id }} && result.valid) {
-            $('#notice').html('Hello');
+        if (result.feedId == {{ feedId }}) {
+            console.log(result.status);
+            if (result.status == 'Download Error' || result.status == 'Import Error') {
+                $('#noticeDanger').html(result.message);
+                $('#noticeDanger').removeClass('hide');
+                $('#noticeInfo').addClass('hide');
+            } else {
+                $('#noticeInfo').html(result.message);
+                $('#noticeInfo').removeClass('hide');
+                $('#noticeDanger').addClass('hide');
+
+                if (result.status == 'Downloaded') {
+                    $('#viewDownload').removeClass('hide');
+                    $('#viewOffer').addClass('hide');
+                } else if (result.status == 'Imported') {
+                    $('#viewOffer').removeClass('hide');
+                    $('#viewDownload').addClass('hide');
+                }
+            }
+
             $('#noticeModal').modal('show');
         }
     });

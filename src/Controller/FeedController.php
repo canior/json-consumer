@@ -10,11 +10,8 @@ use App\Form\FeedType;
 use App\Repository\FeedRepository;
 use App\Service\FeedService;
 use App\Service\OfferService;
-use App\Service\WebSocketService;
 use App\Utils\Config;
 use Knp\Component\Pager\PaginatorInterface;
-use React\Socket\ConnectionInterface;
-use React\Socket\Server;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -106,7 +103,7 @@ class FeedController extends BaseController
 		}
 
 		return $this->render('feed/download.html.twig', [
-			'title' => 'Confirm Feed',
+			'title' => 'Download Feed',
 			'feed' => $feed
 		]);
 	}

@@ -11,7 +11,8 @@
                     <!-- /.box-header -->
                     <div class="box-body">
                         <div class="col-md-12 text-center">
-                            <div class="alert {% if feed.readyToImport  %} alert-info {% else %} alert-danger {% endif %} ">{{ feed.statusText }}</div>
+                            <div class="alert
+                                {% if feed.downloadedError or feed.importedError  %} alert-danger {% else %} alert-info {% endif %} ">{{ feed.status }}</div>
                         </div>
 
                         <div class="col-md-12">
@@ -37,20 +38,21 @@
 
                         <div class="col-md-12 text-center">
 
-                            {% if feed.valid is null %}
-                            {% elseif feed.valid %}
-                            <form action="/feed/import/{{ feed.id }}" method="post">
-                                <button class="btn btn-primary"
-                                    type="submit">{{ button_label|default('Import') }}</button>
-                            </form>
-                            {% else %}
-                                <a class="btn btn-danger" href="{{ path('feed_new') }}" type="button">Import Again</a>
+                            {% if feed.downloaded %}
+                                <form action="/feed/import/{{ feed.id }}" method="post">
+                                    <button class="btn btn-primary"
+                                        type="submit">{{ button_label|default('Import') }}</button>
+                                </form>
+                            {% elseif feed.imported %}
+                                <a class="btn btn-primary" href="{{ path('offer_index', {'feedId' : feed.id}) }}" type="button">View Offers</a>
                             {% endif %}
-
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    {% if feed.id is defined %}
+    {% include "popup.modal.html.twig" with {feedId: feed.id} %}
+    {% endif %}
 {% endblock %}

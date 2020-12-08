@@ -35,15 +35,15 @@ class OfferRepositoryTest extends AbstractTestCase
 		$searchOffers = $this->getOfferRepository()->findOfferQuery(['feedId' => 100,'name' => 'er1', 'sourceUrl' => 'test.com'])->getQuery()->getResult();
 		$this->assertEquals(0, count($searchOffers));
 
-		$orderOffers = $this->getOfferRepository()->findOfferQuery([], ['name' => 'desc'])->getQuery()->getResult();
+		$orderOffers = $this->getOfferRepository()->findOfferQuery([], ['field' => 'name', 'order' => 'desc'])->getQuery()->getResult();
 		$this->assertEquals($offers['offer2'], $orderOffers[0]);
 		$this->assertEquals($offers['offer1'], $orderOffers[1]);
 
-		$orderOffers = $this->getOfferRepository()->findOfferQuery([], ['cashBack' => 'desc'])->getQuery()->getResult();
+		$orderOffers = $this->getOfferRepository()->findOfferQuery([], ['field' => 'cashBack', 'order' => 'desc'])->getQuery()->getResult();
 		$this->assertEquals($offers['offer2'], $orderOffers[0]);
 		$this->assertEquals($offers['offer1'], $orderOffers[1]);
 
-		$orderOffers = $this->getOfferRepository()->findOfferQuery([], ['cashBack' => 'asc'])->getQuery()->getResult();
+		$orderOffers = $this->getOfferRepository()->findOfferQuery([], ['field' => 'cashBack', 'order' => 'asc'])->getQuery()->getResult();
 		$this->assertEquals($offers['offer1'], $orderOffers[0]);
 		$this->assertEquals($offers['offer2'], $orderOffers[1]);
 	}

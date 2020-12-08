@@ -19,13 +19,13 @@ final class Version20201206084621 extends AbstractMigration
 	public function up(Schema $schema): void {
 		$this->addSql('CREATE TABLE `feed` (
 								  `id` int(10) NOT NULL AUTO_INCREMENT,
+								  `status` varchar(255) NOT NULL,
 								  `source_url` varchar(1000) NOT NULL,
 								  `url` varchar(1000),
 								  `skip_error` tinyint(1) NOT NULL,
 								  `force_update` tinyint(1) NOT NULL,
 								  `valid` tinyint(1),
 								  `large` tinyint(1),
-								  `chunk_sum` varchar(255),
 								  `created_at` int(10) NOT NULL,
 								  `process_started_at` int(10),
 								  `process_completed_at` int (10),

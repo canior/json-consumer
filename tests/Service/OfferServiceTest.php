@@ -114,6 +114,7 @@ class OfferServiceTest extends AbstractTestCase
 		$url1 = '/tmp/' . uniqid();
 		file_put_contents($url1, self::OFFERS_JSON);
 		$feed1 = new FeedEntity();
+		$feed1->setStatus(FeedEntity::STATUS_IMPORTING);
 		$feed1->setSourceUrl("http://createFeed.com");
 		$feed1->setSkipError(true);
 		$feed1->setForceUpdate(true);
@@ -132,6 +133,7 @@ class OfferServiceTest extends AbstractTestCase
 		$this->assertEquals("Buy 2: Select TRISCUIT Crackers", $offer1->getName());
 		$this->assertEquals("https://d3bx4ud3idzsqf.cloudfront.net/public/production/6840/67561_1535141624.jpg", $offer1->getImageUrl());
 		$this->assertEquals(1.0, $offer1->getCashBack());
+		$this->assertEquals(FeedEntity::STATUS_IMPORTED, $feed1->getStatus());
 
 		/**
 		 * @var OfferEntity $offer2
@@ -147,6 +149,7 @@ class OfferServiceTest extends AbstractTestCase
 		$url2 = '/tmp/' . uniqid();
 		file_put_contents($url2, self::OFFERS_UPDATE_JSON);
 		$feed2 = new FeedEntity();
+		$feed2->setStatus(FeedEntity::STATUS_IMPORTING);
 		$feed2->setSourceUrl("http://updatetFeed.com");
 		$feed2->setSkipError(true);
 		$feed2->setForceUpdate(true);
@@ -195,6 +198,7 @@ class OfferServiceTest extends AbstractTestCase
 		$url1 = '/tmp/' . uniqid();
 		file_put_contents($url1, self::OFFERS_JSON);
 		$feed1 = new FeedEntity();
+		$feed1->setStatus(FeedEntity::STATUS_IMPORTING);
 		$feed1->setSourceUrl("http://createFeed.com");
 		$feed1->setSkipError(true);
 		$feed1->setForceUpdate(true);
@@ -228,6 +232,7 @@ class OfferServiceTest extends AbstractTestCase
 		$url2 = '/tmp/' . uniqid();
 		file_put_contents($url2, self::OFFERS_UPDATE_JSON);
 		$feed2 = new FeedEntity();
+		$feed2->setStatus(FeedEntity::STATUS_IMPORTING);
 		$feed2->setSourceUrl("http://updatetFeed.com");
 		$feed2->setSkipError(true);
 		$feed2->setForceUpdate(false);

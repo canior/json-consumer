@@ -67,13 +67,12 @@ class OfferRepository extends ServiceEntityRepository
 
 		$fields = $this->getEntityManager()->getClassMetadata(OfferEntity::class)->getFieldNames();
 
-		foreach ($orderBy as $property => $order) {
-			if (in_array($property, $fields)) {
-				if (!empty($order)) {
-					$query->addOrderBy('o.' . $property, $order);
-				}
+		if (array_key_exists('field', $orderBy) && array_key_exists('order', $orderBy)) {
+			if (in_array($orderBy['field'], $fields) && in_array($orderBy['order'], ['asc', 'desc'])) {
+				$query->orderBy('o.' . $orderBy['field'], $orderBy['order']);
 			}
 		}
+
 
 		return $query;
 	}

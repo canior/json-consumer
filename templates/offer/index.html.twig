@@ -11,9 +11,8 @@
                 <!-- /.box-header -->
                 <!-- form start -->
                 <form class="form-horizontal" id="searchForm">
-                    <input type="hidden" name="orderById" value="{{form.orderBy.id}}" />
-                    <input type="hidden" name="orderByName" value="{{form.orderBy.name}}" />
-                    <input type="hidden" name="orderByCashBack" value="{{form.orderBy.cashBack}}" />
+                    <input type="hidden" name="orderByField" value="{{form.orderBy.field}}" />
+                    <input type="hidden" name="orderByOrder" value="{{form.orderBy.order}}" />
                     <div class="box-body">
                         <div class="form-group col-md-3">
                             <label class="col-sm-4 control-label">Feed Id</label>
@@ -64,10 +63,10 @@
                                 <th class="col-md-2">Image</th>
                                 <th class="col-md-1">
                                     <a id="sortId" href="javascript:void(0)">ID</a>
-                                    {% if 'id' in form.orderBy|keys %}
-                                        {% if form.orderBy.id == 'asc' %}
+                                    {% if form.orderBy.field == 'id' %}
+                                        {% if form.orderBy.order == 'asc' %}
                                             <span class="fa fa-sort-asc text-red"></span>
-                                        {% elseif form.orderBy.id == 'desc' %}
+                                        {% elseif form.orderBy.order == 'desc' %}
                                             <span class="fa fa-sort-desc text-red"></span>
                                         {% endif %}
                                     {% endif %}
@@ -75,20 +74,20 @@
                                 <th class="col-md-1">Offer ID</th>
                                 <th class="col-md-2">
                                     <a id="sortName" href="javascript:void(0)">Name</a>
-                                    {% if 'name' in form.orderBy|keys %}
-                                        {% if form.orderBy.name == 'asc' %}
+                                    {% if form.orderBy.field == 'name' %}
+                                        {% if form.orderBy.order == 'asc' %}
                                             <span class="fa fa-sort-asc text-red"></span>
-                                        {% elseif form.orderBy.name == 'desc' %}
+                                        {% elseif form.orderBy.order == 'desc' %}
                                             <span class="fa fa-sort-desc text-red"></span>
                                         {% endif %}
                                     {% endif %}
                                 </th>
                                 <th class="col-md-1">
                                     <a id="sortCashBack" href="javascript:void(0)">Cash Back</a>
-                                    {% if 'cashBack' in form.orderBy|keys %}
-                                        {% if form.orderBy.cashBack == 'asc' %}
+                                    {% if form.orderBy.field == 'cashBack'  %}
+                                        {% if form.orderBy.order == 'asc' %}
                                             <span class="fa fa-sort-asc text-red"></span>
-                                        {% elseif form.orderBy.cashBack == 'desc' %}
+                                        {% elseif form.orderBy.order == 'desc' %}
                                             <span class="fa fa-sort-desc text-red"></span>
                                         {% endif %}
                                     {% endif %}
@@ -139,12 +138,14 @@
     </div>
     <!-- /.row -->
 
+    {% if form.search.feedId is defined and form.search.feedId > 0 %}
+    {% include "popup.modal.html.twig" with {feedId: form.search.feedId} %}
+    {% endif %}
+
     <script>
         function toggleSort(sortInput) {
             let order = sortInput.val();
-            if (order === '') {
-                sortInput.val('asc');
-            } else if (order === 'asc') {
+            if (order === 'asc') {
                 sortInput.val('desc');
             } else if (order === 'desc') {
                 sortInput.val('asc');
@@ -154,13 +155,16 @@
 
         $(document).ready(function() {
             $('#sortCashBack').on('click', function() {
-                toggleSort($('input[name=orderByCashBack]'));
+                $('input[name=orderByField]').val('cashBack');
+                toggleSort($('input[name=orderByOrder]'));
             })
             $('#sortName').on('click', function() {
-                toggleSort($('input[name=orderByName]'));
+                $('input[name=orderByField]').val('name');
+                toggleSort($('input[name=orderByOrder]'));
             })
             $('#sortId').on('click', function() {
-                toggleSort($('input[name=orderById]'));
+                $('input[name=orderByField]').val('id');
+                toggleSort($('input[name=orderByOrder]'));
             })
         });
 
