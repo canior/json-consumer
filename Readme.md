@@ -80,7 +80,7 @@ Quick run (Handle small feed file < 5000 bytes )
 1. cp .env.dist to .env
 2. replace DATABASE_URL to correct info
 3. composer install
-4. chmod -R 777 var && chmod -R public/upload
+4. chmod -R 777 var && chmod -R 777 public/upload
 5. create database tables
    php bin/console doctrine:migrations:migrate
 6. symfony server:start
