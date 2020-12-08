@@ -10,6 +10,7 @@ use App\Message\DownloadFile;
 use App\Repository\FeedRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
@@ -61,6 +62,10 @@ class FeedService
 	public function processFeed(int $id) {
 		$this->logger->info('process feed ' . $id);
 		$feed = $this->feedRepository->find($id);
+		if ($feed == null) {
+			throw new NotFoundHttpException();
+		}
+
 		$sourceUrl = $feed->getSourceUrl();
 
 		if (!$feed->isDownloading()) {
